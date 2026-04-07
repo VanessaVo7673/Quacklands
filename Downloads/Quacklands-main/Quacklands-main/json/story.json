@@ -67,7 +67,7 @@
       "puzzle": {
         "type": "dragdrop",
         "frame_scale": 5,
-        "piece_scale": 1.2,
+        "piece_scale": 0.85,
         "reward": "element_water",
         "pieces": [
           {"id": "shrine_piece_1", "start_pos": [10, 2], "correct_pos": [1070, 673], "size": [275, 275]},

@@ -32,6 +32,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Game:
+    # Reference resolution - coordinates are designed for 1920x1080 monitors
+    REFERENCE_WIDTH = 1920
+    REFERENCE_HEIGHT = 1080
+    
     def __init__(self):
         self.current_scene = 'main_menu'
         self.collected_elements = set()
@@ -40,6 +44,10 @@ class Game:
         self.dragged_piece = None
         self.offset = (0, 0)
         self.pieces = []
+        
+        # Calculate resolution scaling factors
+        self.scale_x = WIDTH / self.REFERENCE_WIDTH
+        self.scale_y = HEIGHT / self.REFERENCE_HEIGHT
         self.puzzle_frame_image = None
         self.lock_glow_image = None
         self.puzzle_complete_image = None
@@ -315,6 +323,12 @@ class Game:
         # Use uniform scaling to preserve original aspect ratio.
         s = min(sx, sy)
         return [max(24, int(round(size[0] * s))), max(24, int(round(size[1] * s)))]
+
+    def scale_coordinates(self, pos):
+        """Scale a position from 1920x1080 reference to current screen resolution."""
+        if pos is None:
+            return pos
+        return [int(round(pos[0] * self.scale_x)), int(round(pos[1] * self.scale_y))]
 
     def snap_threshold(self):
         return max(36, int(min(WIDTH, HEIGHT) * 0.06))
@@ -1010,8 +1024,9 @@ class Game:
                         max(24, int(round(piece['size'][0] * piece_scale))),
                         max(24, int(round(piece['size'][1] * piece_scale))),
                     ]
-                    piece['start_pos'] = piece['start_pos'][:]
-                    piece['correct_pos'] = piece['correct_pos'][:]
+                    # Apply resolution scaling to coordinates
+                    piece['start_pos'] = self.scale_coordinates(piece['start_pos'][:])
+                    piece['correct_pos'] = self.scale_coordinates(piece['correct_pos'][:])
                     piece['current_pos'] = piece['start_pos'][:]
                     piece['locked'] = False
                     piece_image_path = self.find_piece_image_path(piece['id'])
@@ -1031,8 +1046,9 @@ class Game:
                         max(24, int(round(piece['size'][0] * piece_scale))),
                         max(24, int(round(piece['size'][1] * piece_scale))),
                     ]
-                    piece['start_pos'] = piece['start_pos'][:]
-                    piece['correct_pos'] = piece['correct_pos'][:]
+                    # Apply resolution scaling to coordinates
+                    piece['start_pos'] = self.scale_coordinates(piece['start_pos'][:])
+                    piece['correct_pos'] = self.scale_coordinates(piece['correct_pos'][:])
                     piece['current_pos'] = piece['start_pos'][:]
                     piece['locked'] = False
                     piece_image_path = self.find_piece_image_path(piece['id'])
@@ -2325,8 +2341,20 @@ class Game:
                     if cell_rect.collidepoint(mouse_pos):
                         self.tictactoe_board[idx] = 'X'
                         self.ttt_mark_anims[idx] = 0.0
-                        self.ttt_ai_delay_timer = 0.85
-                        self.tictactoe_current_turn = 'ai'
+                        # Check if player won immediately
+                        if self.check_tictactoe_winner(self.tictactoe_board) == 'X':
+                            puzzle = scenes[self.current_scene].get('puzzle', {})
+                            wins_needed = int(puzzle.get('wins_needed', 3))
+                            self.tictactoe_player_wins += 1
+                            if self.tictactoe_player_wins < wins_needed:
+                                self.tictactoe_board = [None] * 9
+                                self.ttt_mark_anims = {}
+                                self.tictactoe_current_turn = 'player'
+                            else:
+                                self.tictactoe_current_turn = 'ai'
+                        else:
+                            self.ttt_ai_delay_timer = 0.85
+                            self.tictactoe_current_turn = 'ai'
                         break
 
     def run(self):
