@@ -32,22 +32,35 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Game:
+    """Main game controller for Legend of the First Flock.
+    
+    Handles all game logic, scene management, puzzle gameplay, rendering,
+    user input, and asset loading. Supports multiple game scenes (menu, story,
+    action sequences) and various puzzle types (drag-drop, memory, tic-tac-toe).
+    """
     # Reference resolution - coordinates are designed for 1920x1080 monitors
     REFERENCE_WIDTH = 1920
     REFERENCE_HEIGHT = 1080
     
     def __init__(self):
+        """Initialize the game with default state and load all assets."""
+        # --- CORE GAME STATE ---
         self.current_scene = 'main_menu'
         self.collected_elements = set()
         self.ui_elements = []
         self.running = True
+        
+        # --- DRAG-DROP PUZZLE STATE (Chapter 2) ---
         self.dragged_piece = None
         self.offset = (0, 0)
         self.pieces = []
         
-        # Calculate resolution scaling factors
+        # --- RESOLUTION SCALING ---
+        # Calculate resolution scaling factors for 1920x1080 reference
         self.scale_x = WIDTH / self.REFERENCE_WIDTH
         self.scale_y = HEIGHT / self.REFERENCE_HEIGHT
+        
+        # --- PUZZLE ASSETS AND UI ---
         self.puzzle_frame_image = None
         self.lock_glow_image = None
         self.puzzle_complete_image = None
@@ -56,9 +69,13 @@ class Game:
         self.chapter1_continue_rect = None
         self.skip_button_rect = None
         self.skip_button_action = None
+        
+        # --- CHAPTER 1: OBSTACLE DODGE STATE ---
         self.current_obstacles = []
         self.forest_obstacles = []
         self.goal_x = None
+        
+        # --- COMPLETION ANIMATION STATE ---
         self.completion_anim_active = False
         self.completion_anim_time = 0.0
         self.completion_anim_action = None
@@ -66,7 +83,7 @@ class Game:
         self.completion_shake_duration = 0.35
         self.completion_fade_duration = 0.55
 
-        # Story scene fade timing
+        # --- STORY SCENE TEXT RENDERING ---
         self.scene_start_time = 0.0
         self.typing_speed = 20  # characters per second (slower for reading)
         self.typed_chars = 0
@@ -81,7 +98,7 @@ class Game:
         self.chapter_title_fade_duration = 0.75
         self.chapter1_attempted = False  # True after first death/timeout in chapter 1
 
-        # Memory pairs game
+        # --- CHAPTER 3: MEMORY PAIRS GAME STATE ---
         self.memory_cards = []
         self.memory_card_images = {}
         self.memory_flipped = []
@@ -89,7 +106,7 @@ class Game:
         self.memory_attempts = 0
         self.memory_mismatch_timer = 0.0
 
-        # Tic-tac-toe game
+        # --- CHAPTER 4: TIC-TAC-TOE GAME STATE ---
         self.tictactoe_board = [None] * 9
         self.tictactoe_player_wins = 0
         self.tictactoe_ai_wins = 0
@@ -101,7 +118,7 @@ class Game:
         self.ttt_mark_anims = {}       # cell_idx -> elapsed seconds (pop-in animation)
         self.ttt_ai_delay_timer = 0.0  # countdown before AI places its mark
 
-        # Element ascension / final trophy
+        # --- CHAPTER 7: ELEMENT ASCENSION STATE (Final Scene) ---
         self.ascension_elements = []
         self.ascension_time = 0.0
         self.final_trophy_active = False
@@ -109,6 +126,7 @@ class Game:
         self.final_trophy_anim_time = 0.0
         self.final_trophy_continue_rect = None
 
+        # --- ASSET LOADING ---
         glow_path = self.find_asset_path('aura.png')
         if glow_path:
             try:
@@ -273,7 +291,14 @@ class Game:
         self.attempts_remaining = 3
 
     def check_tictactoe_winner(self, board):
-        """Check if there's a winner in tic-tac-toe (X or O), returns 'X', 'O', or None"""
+        """Determine tic-tac-toe winner by checking all lines.
+        
+        Args:
+            board: List of 9 elements representing tic-tac-toe board state
+            
+        Returns:
+            'X' if player wins, 'O' if AI wins, None if no winner
+        """
         lines = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8],  # rows
             [0, 3, 6], [1, 4, 7], [2, 5, 8],  # columns
@@ -285,7 +310,16 @@ class Game:
         return None
 
     def get_tictactoe_ai_move(self, board):
-        """Get AI move for tic-tac-toe (simple minimax or random)"""
+        """Calculate AI move for tic-tac-toe using strategic heuristics.
+        
+        Strategy: Try to win, block player, take center, take corners, then random.
+        
+        Args:
+            board: List of 9 elements representing tic-tac-toe board state
+            
+        Returns:
+            Index (0-8) where AI places its mark, or None if board full
+        """
         empty = [i for i in range(9) if board[i] is None]
         if not empty:
             return None
@@ -313,11 +347,31 @@ class Game:
         return random.choice(empty)
 
     def scale_point(self, point, design_width=1920, design_height=1080):
+        """Scale a single point from design resolution to current screen resolution.
+        
+        Args:
+            point: [x, y] coordinate in design resolution
+            design_width: Original design width (default 1920)
+            design_height: Original design height (default 1080)
+            
+        Returns:
+            [x, y] coordinate scaled to current screen size
+        """
         sx = WIDTH / float(design_width)
         sy = HEIGHT / float(design_height)
         return [int(round(point[0] * sx)), int(round(point[1] * sy))]
 
     def scale_size(self, size, design_width=1920, design_height=1080):
+        """Scale dimensions while preserving aspect ratio.
+        
+        Args:
+            size: [width, height] in design resolution
+            design_width: Original design width (default 1920)
+            design_height: Original design height (default 1080)
+            
+        Returns:
+            [width, height] scaled to current screen (uniform scaling)
+        """
         sx = WIDTH / float(design_width)
         sy = HEIGHT / float(design_height)
         # Use uniform scaling to preserve original aspect ratio.
@@ -353,6 +407,7 @@ class Game:
                 self.lock_piece(piece)
 
     def build_completed_puzzle_fallback(self):
+        """Render completed puzzle by compositing all pieces at their correct positions."""
         if not self.pieces:
             self.generated_complete_image = None
             self.generated_complete_rect = None
@@ -379,6 +434,7 @@ class Game:
         self.generated_complete_rect = pygame.Rect(min_x, min_y, width, height)
 
     def draw_scaled_aura(self, target_rect):
+        """Draw a pulsing glow/aura effect around a target rectangle for locked pieces."""
         if target_rect is None:
             return
 
@@ -403,6 +459,7 @@ class Game:
         screen.blit(aura_surface, (aura_x, aura_y))
 
     def draw_chapter1_completion_prompt(self):
+        """Render the completion prompt panel for Chapter 1 puzzle success."""
         if self.current_scene != 'chapter1' or not self.chapter_complete or self.completion_anim_active:
             self.chapter1_continue_rect = None
             return
@@ -440,6 +497,7 @@ class Game:
         screen.blit(btn_text, (self.chapter1_continue_rect.centerx - btn_text.get_width() // 2, self.chapter1_continue_rect.centery - btn_text.get_height() // 2))
 
     def start_completion_animation(self, action, reward=None):
+        """Initiate a completion animation sequence (shake + fade effects)."""
         if self.completion_anim_active:
             return
         self.completion_anim_active = True
@@ -466,6 +524,7 @@ class Game:
         )
 
     def draw_forest_run_scene(self, shake_x, shake_y):
+        """Render the forest obstacle avoidance minigame with perspective effects."""
         horizon_y = int(HEIGHT * 0.34) + shake_y
         center_x = WIDTH // 2 + shake_x
 
@@ -562,7 +621,7 @@ class Game:
         screen.blit(distance_text, (WIDTH - 300, 30))
 
     def draw_dodge_scene(self, shake_x, shake_y):
-        """Draw the dodge and collect minigame for Chapter 2"""
+        """Render the dodge and collect minigame for Chapter 2."""
         # Draw background image if available
         if self.chapter1_background_image:
             bg_scaled = pygame.transform.scale(self.chapter1_background_image, (WIDTH, HEIGHT))

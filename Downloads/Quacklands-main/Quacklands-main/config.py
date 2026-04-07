@@ -1,4 +1,9 @@
-"""Game configuration and settings"""
+"""Game configuration and settings
+
+Central configuration module for Legend of the First Flock.
+Initializes pygame, screen display, GUI manager, colors, fonts,
+and loads story data from JSON files.
+"""
 
 import pygame
 import pygame_gui
@@ -7,7 +12,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Screen Settings
+# --- SCREEN SETTINGS ---
 pygame.init()
 info = pygame.display.Info()
 WIDTH = info.current_w
@@ -15,14 +20,14 @@ HEIGHT = info.current_h
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("Legend of the First Flock")
 
-# GUI Manager
+# --- GUI MANAGER ---
 # Create temporary theme with absolute paths for pygame_gui
 import warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='pygame_gui')
 
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))
 
-# Colors
+# --- COLOR PALETTE ---
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 LIGHT_GRAY = (200, 200, 200)
@@ -31,7 +36,8 @@ RED = (255, 0, 0)
 GREEN = (0, 200, 0)
 BLUE = (0, 150, 255)
 
-# Fonts
+# --- FONT LOADING ---
+# Font file paths with fallback to system fonts
 _FONT_TITLE = os.path.join(BASE_DIR, 'assets', 'font', 'Delius_Swash_Caps', 'DeliusSwashCaps-Regular.ttf')
 _FONT_BODY  = os.path.join(BASE_DIR, 'assets', 'font', 'Delius', 'Delius-Regular.ttf')
 
@@ -61,7 +67,8 @@ except Exception:
     font       = pygame.font.Font(None, 36)
     font_small = pygame.font.Font(None, 26)
 
-# Load Story Data
+# --- STORY DATA LOADING ---
+# Load game narrative and puzzle definitions from JSON
 story_path = os.path.join(BASE_DIR, 'story', 'story.json')
 if not os.path.exists(story_path):
     story_path = os.path.join(BASE_DIR, 'json', 'story.json')
@@ -69,5 +76,6 @@ if not os.path.exists(story_path):
 with open(story_path, 'r', encoding='utf-8-sig') as f:
     story_data = json.load(f)
 
+# Extract scenes and game elements from loaded data
 scenes = story_data['scenes']
 elements = story_data['elements']
