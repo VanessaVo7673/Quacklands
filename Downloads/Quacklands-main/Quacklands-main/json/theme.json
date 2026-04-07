@@ -1,0 +1,35 @@
+{
+    "button": {
+        "colours": {
+            "normal_bg": "#FFD700",
+            "hovered_bg": "#FFA500",
+            "active_bg": "#FF8C00",
+            "normal_text": "#000000",
+            "hovered_text": "#FFFFFF",
+            "active_text": "#FFFFFF"
+        },
+        "font": {
+            "name": "Delius",
+            "regular_path": "assets/font/Delius/Delius-Regular.ttf",
+            "size": "20"
+        },
+        "misc": {
+            "border_width": "2",
+            "shadow_width": "1"
+        }
+    },
+    "text_entry_line": {
+        "colours": {
+            "normal_bg": "#FFFFFF",
+            "hovered_bg": "#F0F0F0",
+            "active_bg": "#E0E0E0"
+        }
+    },
+    "label": {
+        "font": {
+            "name": "Delius",
+            "regular_path": "assets/font/Delius/Delius-Regular.ttf",
+            "size": "24"
+        }
+    }
+}

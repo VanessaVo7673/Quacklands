@@ -1,0 +1,172 @@
+{
+  "game": {
+    "title": "Legend of the First Flock",
+    "author": "Vanessa Vo",
+    "version": "0.2",
+    "description": "Restore balance to Quacklands by collecting elements through minigames"
+  },
+  "scenes": {
+    "main_menu": {
+      "type": "menu",
+      "title": "Legend of the First Flock",
+      "text": "Restore balance to Quacklands and complete the quest of the First Flock!",
+      "image": "assets/title.png",
+      "choices": [
+        {"text": "Start Adventure", "next": "intro"},
+        {"text": "Quit Game", "next": "quit"}
+      ]
+    },
+    "intro": {
+      "type": "story",
+      "prompt": "Would you like to save Quacklands?",
+      "text": "A very long time ago, there was a generation of powerful ducks, known as the First Flock. They possessed unimaginable abilities. Every biome in Quacklands had its protector until the Great Plumage happened. Now Quacklands has chosen you to restore the elements and bring balance back to our land.",
+      "image": "assets/intro.png",
+      "choices": [
+        {"text": "Accept the Quest", "next": "chapter1_intro"}
+      ]
+    },
+    "chapter1_intro": {
+      "type": "story",
+      "chapter": 1,
+      "prompt": "Can you navigate through the Enchanted Thicket safely?",
+      "text": "Chapter 1: The Enchanted Thicket\n\nThe forest path is unstable and haunted by falling hazards. Gather nature orbs while dodging danger to restore the first flow of balance.",
+      "image": "assets/forest_intro.png",
+      "choices": [
+        {"text": "Enter the Thicket", "next": "chapter1"}
+      ]
+    },
+    "chapter1": {
+      "type": "action",
+      "chapter": 1,
+      "text": "Gather nature orbs while dodging falling hazards. Collect enough before time runs out.",
+      "image": "assets/forest_bg.png",
+      "puzzle": {
+        "type": "dodge_and_collect",
+        "time_limit": 60,
+        "required_score": 5,
+        "lives": 3,
+        "reward": "element_earth"
+      },
+      "choices": []
+    },
+    "chapter2_intro": {
+      "type": "story",
+      "chapter": 2,
+      "prompt": "Can you rebuild the Foundation Shrine?",
+      "text": "Chapter 2: The Foundation Shrine\n\nReassemble the shattered shrine stones to restore the Water flow through Quacklands.",
+      "image": "assets/nest_intro.png",
+      "choices": [
+        {"text": "Reassemble the Shrine", "next": "chapter2"}
+      ]
+    },
+    "chapter2": {
+      "type": "action",
+      "chapter": 2,
+      "text": "Drag the shrine pieces into their correct positions inside the frame.",
+      "image": "assets/nest_bg.png",
+      "puzzle": {
+        "type": "dragdrop",
+        "frame_scale": 5,
+        "piece_scale": 1.2,
+        "reward": "element_water",
+        "pieces": [
+          {"id": "shrine_piece_1", "start_pos": [10, 2], "correct_pos": [1070, 673], "size": [275, 275]},
+          {"id": "shrine_piece_2", "start_pos": [146, 164], "correct_pos": [933, 433], "size": [307, 198]},
+          {"id": "shrine_piece_3", "start_pos": [18, 390], "correct_pos": [936, 38], "size": [188, 269]},
+          {"id": "shrine_piece_4", "start_pos": [246, 444], "correct_pos": [498, 399], "size": [217, 401]},
+          {"id": "shrine_piece_5", "start_pos": [1569, 233], "correct_pos": [770, 803], "size": [280, 196]},
+          {"id": "shrine_piece_6", "start_pos": [1339, 15], "correct_pos": [500, 85], "size": [193, 252]},
+          {"id": "shrine_piece_7", "start_pos": [1648, 530], "correct_pos": [665, 342], "size": [294, 292]},
+          {"id": "shrine_piece_8", "start_pos": [1415, 466], "correct_pos": [696, 38], "size": [201, 267]},
+          {"id": "shrine_piece_9", "start_pos": [18, 720], "correct_pos": [1023, 90], "size": [280, 327]},
+          {"id": "shrine_piece_10", "start_pos": [1321, 748], "correct_pos": [669, 635], "size": [343, 279]},
+          {"id": "shrine_piece_11", "start_pos": [1544, -51], "correct_pos": [1209, 289], "size": [180, 314]}
+        ]
+      },
+      "choices": []
+    },
+    "chapter3_intro": {
+      "type": "story",
+      "chapter": 3,
+      "prompt": "Will you venture into the Desert of Fury and collect the Cards of Fire?",
+      "text": "Chapter 3: Desert of Fury\n\nWith the Earth element secured, you venture beyond the forest into a wasteland of scorching heat and endless dunes. This is the Desert of Fury-a biome consumed by volcanic fire and chaos. The ground itself crackles with residual dragon magic.\n\nHidden among the ancient sands are the legendary Cards of Fury-mystical tokens that the First Flock created to channel and contain the wild Fire element. Scattered by the dragons' rampage, these cards now lie dormant, waiting for someone worthy to collect them.",
+      "image": "assets/desert_intro.png",
+      "choices": [
+        {"text": "Enter the Desert", "next": "chapter3"}
+      ]
+    },
+    "chapter3": {
+      "type": "puzzle",
+      "chapter": 3,
+      "text": "The Cards of Fury are scattered before you. Flip two cards each turn and match all 5 pairs to awaken the Fire element. You have 5 attempts.",
+      "image": "assets/desert_bg.png",
+      "puzzle": {
+        "type": "memory_pairs",
+        "pairs": 5,
+        "attempts": 5,
+        "fail_on_miss": true,
+        "card_glob": "assets/chapter 3/cards/card*.png",
+        "reward": "element_fire"
+      },
+      "choices": []
+    },
+    "chapter4_intro": {
+      "type": "story",
+      "chapter": 4,
+      "prompt": "Can you win the Nature Sigil Duel?",
+      "text": "Chapter 4: The Nature Sigil Duel \nAt the heart of the temple lies a living stone board carved with ancient runes. To awaken the Nature element, you must defeat the guardian in a ritual duel of sigils.\n\nPlace your mark with care. Every move shapes the balance of the board, and only a steady mind can claim victory.\n\nWin enough rounds to prove your harmony with Nature.",
+      "image": "assets/temple_intro.png",
+      "choices": [
+        {"text": "Enter the Temple", "next": "chapter4"}
+      ]
+    },
+    "chapter4": {
+      "type": "puzzle",
+      "chapter": 4,
+      "text": "Nature Sigil Duel: Click a tile to place your mark. Defeat the guardian in a best-of-three duel to claim the Nature element.",
+      "image": "assets/temple_bg.png",
+      "puzzle": {
+        "type": "tictactoe",
+        "wins_needed": 3,
+        "reward": "element_nature"
+      },
+      "choices": []
+    },
+    "final_intro": {
+      "type": "story",
+      "chapter": 4,
+      "prompt": "Will you restore Earth, Nature, Water, and Fire to Quacklands?",
+      "text": "Final Chapter: Ascension to the Sky\n\nYou have done the impossible. Against all odds, you have reclaimed the four sacred forces Quacklands needs most: Earth, Nature, Water, and Fire.\n\nThere is only one path left: return to the Grand Shrine, the heart of Quacklands, and place these four elements upon its altar. When you do, the ancient magic of the First Flock will awaken, and the elements will ascend into the heavens with their power restored.\n\nA spiral of light will sweep across the sky as balance returns to the land. Forests will breathe again, rivers will flow true, and the world will heal.",
+      "image": "assets/shrine_final_intro.png",
+      "choices": [
+        {"text": "Enter the Grand Shrine", "next": "final"}
+      ]
+    },
+    "final": {
+      "type": "action",
+      "chapter": 7,
+      "text": "Place each element upon the altar... Feel their power awaken... Watch as they spiral upward, carrying the blessings of the First Flock to the heavens above. The sky glows with ancient light. Quacklands is saved.",
+      "image": "assets/sky_bg.png",
+      "puzzle": {
+        "type": "element_ascension",
+        "duration": 5.0,
+        "reward": "victory"
+      },
+      "choices": []
+    },
+    "victory": {
+      "type": "ending",
+      "text": "Congratulations, brave soul! You have restored balance to Quacklands!\n\nThe four elements-Earth, Nature, Water, and Fire-now flow freely through the land once more. Forests bloom anew, rivers run clear, and warmth returns to the skies. The creatures of Quacklands emerge from their hiding places, and joy returns to their hearts.\n\nThe First Flock watches from above, their ancient power renewed through your courage and determination. You have proven yourself worthy of their legacy. The curse has been broken, and a new age of peace and prosperity dawns over Quacklands.\n\nYou are now a legend-a hero of the First Flock, remembered forever in the hearts and minds of all Quacklings. Your name shall be sung in songs and told in tales for generations to come.\n\nThe quest is complete. Balance has been restored. Peace reigns eternal.",
+      "image": "assets/victory.png",
+      "choices": [
+        {"text": "Return to Menu", "next": "main_menu"}
+      ]
+    }
+  },
+  "elements": [
+    {"id": "element_fire", "name": "Fire"},
+    {"id": "element_water", "name": "Water"},
+    {"id": "element_earth", "name": "Earth"},
+    {"id": "element_nature", "name": "Nature"}
+  ]
+}
